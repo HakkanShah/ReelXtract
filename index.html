@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Reels Downloader</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>ReelXtract</h1>
+        <input type="text" id="url" placeholder="Enter Reel URL">
+        <button onclick="downloadReel()">Download</button>
+        <p id="message"></p>
+    </div>
+
+    <script>
+        function downloadReel() {
+            let url = document.getElementById("url").value;
+            document.getElementById("message").innerText = "Processing...";
+            
+            fetch("http://127.0.0.1:5000/download", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ url: url })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("message").innerText = data.message || data.error;
+            })
+            .catch(error => console.error(error));
+        }
+    </script>
+
+</body>
+</html>

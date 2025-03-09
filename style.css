@@ -1,0 +1,128 @@
+/* Import a modern, professional font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+
+/* Reset and apply global styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+/* 🔥 Animated Gradient Background */
+body {
+    background: linear-gradient(135deg, #fffcfc, #1a1a1a, #252525);
+    background-size: 400% 400%;
+    animation: backgroundMove 3.5s infinite alternate ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* 🌟 Smooth Gradient Animation */
+@keyframes backgroundMove {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
+}
+
+/* 🎭 Glassmorphism Container with Floating Effect */
+.container {
+    background: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(15px);
+    border-radius: 15px;
+    padding: 30px;
+    width: 400px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: floatUpDown 3.5s infinite ease-in-out;
+}
+
+/* 🌊 Floating Animation */
+@keyframes floatUpDown {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* Title Styling with Text Outline */
+h1 {
+    font-size: 24px;
+    color: #070707; /* Text fill color */
+    font-weight: bolder;
+    margin-bottom: 20px;
+    text-shadow: 
+        -1px -1px 0 #ffffff,  
+         1px -1px 0 #ffffff,  
+        -1px  1px 0 #ffffff,  
+         1px  1px 0 #ffffff; /* White outline */
+}
+
+/* 💠 Input Field with Smooth Effects */
+input {
+    width: 90%;
+    padding: 12px;
+    background: rgb(255, 255, 255);
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+    text-align: center;
+    transition: all 0.3s ease;
+    color: #000000;
+    box-shadow: inset 0 4px 6px rgb(253, 255, 255);
+}
+
+/* Input Focus Effect */
+input:focus {
+    background: rgb(255, 255, 255);
+    box-shadow: 0 0 10px rgb(71, 255, 252);
+}
+
+/* ⚡ Button Design */
+button {
+    width: 90%;
+    padding: 12px;
+    background: linear-gradient(90deg, #007bff, #00d4ff);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    font-weight: bold;
+    margin-top: 15px;
+    box-shadow: 0 4px 10px rgba(0, 122, 255, 0.3);
+    animation: pulseGlow 2s infinite ease-in-out;
+}
+
+/* 🌟 Button Glow Effect */
+@keyframes pulseGlow {
+    0% { box-shadow: 0 0 10px rgba(0, 122, 255, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(0, 122, 255, 1); }
+    100% { box-shadow: 0 0 10px rgba(0, 122, 255, 0.5); }
+}
+
+/* Button Hover */
+button:hover {
+    background: linear-gradient(90deg, #00d4ff, #007bff);
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 122, 255, 0.5);
+}
+
+/* Button Click Effect */
+button:active {
+    transform: scale(0.98);
+}
+
+/* 🎯 Success/Error Message */
+p {
+    margin-top: 15px;
+    font-size: 16px;
+    color: #ff5757;
+    opacity: 0.9;
+}
