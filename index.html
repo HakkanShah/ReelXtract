@@ -15,7 +15,6 @@
         <p id="message"></p>
         <a id="downloadLink" style="display: none;" download>Click here to download</a>
     </div>
-
     <script>
         function downloadReel() {
             let url = document.getElementById("url").value;
@@ -26,7 +25,12 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ url: url })
             })
-            .then(response => response.blob())  // Convert response to file blob
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not OK");
+                }
+                return response.blob();  // Convert response to file blob
+            })
             .then(blob => {
                 let a = document.createElement("a");
                 a.href = URL.createObjectURL(blob);
