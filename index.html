@@ -11,37 +11,37 @@
     <div class="container">
         <h1>ReelXtract</h1>
         <input type="text" id="url" placeholder="Enter Reel URL">
-        <button onclick="downloadReel()">Get Reel</button>
+        <button onclick="downloadReel()">Download</button>
         <p id="message"></p>
-        <a id="downloadLink" href="#" style="display: none;" download>Download Reel</a>
+        <a id="downloadLink" style="display: none;" download>Click here to download</a>
     </div>
 
     <script>
         function downloadReel() {
             let url = document.getElementById("url").value;
             document.getElementById("message").innerText = "Processing...";
-            
-            fetch("https://reelxtract.onrender.com/download", {  // ✅ Correct URL
+
+            fetch("https://reelxtract.onrender.com/download", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ url: url })
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.video_url) {
-                    document.getElementById("message").innerText = "Downloading...";
-                    
-                    let downloadLink = document.createElement("a");
-                    downloadLink.href = data.video_url;
-                    downloadLink.download = "Instagram_Reel.mp4";  // ✅ Forces download
-                    document.body.appendChild(downloadLink);
-                    downloadLink.click();
-                    document.body.removeChild(downloadLink);
-                } else {
-                    document.getElementById("message").innerText = data.error || "Something went wrong!";
-                }
+            .then(response => response.blob())  // Convert response to blob (file)
+            .then(blob => {
+                let downloadLink = document.getElementById("downloadLink");
+                let objectURL = URL.createObjectURL(blob);
+                
+                // ✅ Force download on click
+                downloadLink.href = objectURL;
+                downloadLink.style.display = "block";
+                downloadLink.click();  // ✅ Auto-clicks the download link
+                
+                document.getElementById("message").innerText = "Download started!";
             })
-            .catch(error => console.error("Fetch error:", error));
+            .catch(error => {
+                console.error(error);
+                document.getElementById("message").innerText = "Error downloading the reel.";
+            });
         }
     </script>
 
