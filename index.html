@@ -19,7 +19,7 @@
         function downloadReel() {
             let url = document.getElementById("url").value;
             document.getElementById("message").innerText = "Processing...";
-
+    
             fetch("https://reelxtract.onrender.com/download", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -34,11 +34,11 @@
             .then(blob => {
                 let link = document.createElement("a");
                 link.href = window.URL.createObjectURL(blob);
-                link.download = "Instagram_Reel.mp4";
+                link.download = "Instagram_Reel.mp4";  // ✅ Ensures proper file download
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-                document.getElementById("message").innerText = "Download successful!";
+                document.getElementById("message").innerText = "Download started!";
             })
             .catch(error => {
                 document.getElementById("message").innerText = "Error downloading reel";
@@ -46,6 +46,7 @@
             });
         }
     </script>
+    
 
 </body>
 </html>

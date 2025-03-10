@@ -2,13 +2,14 @@ from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import instaloader
 import os
+import glob
 
 app = Flask(__name__)
 CORS(app)
 
 # Ensure "reels" directory exists
-if not os.path.exists("reels"):
-    os.makedirs("reels")
+DOWNLOAD_FOLDER = "reels"
+os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
 
 @app.route('/download', methods=['POST'])
 def download_reel():
@@ -23,19 +24,22 @@ def download_reel():
         reel_shortcode = reel_url.split("/")[-2]
 
         # Initialize Instaloader
-        loader = instaloader.Instaloader(dirname_pattern="reels")
+        loader = instaloader.Instaloader(dirname_pattern=DOWNLOAD_FOLDER, filename_pattern="{shortcode}")
 
         # Download Reel
         post = instaloader.Post.from_shortcode(loader.context, reel_shortcode)
-        loader.download_post(post, target="reels")
+        loader.download_post(post, target=DOWNLOAD_FOLDER)
 
-        # Find the downloaded file
-        for file in os.listdir("reels"):
-            if file.startswith(reel_shortcode) and file.endswith(".mp4"):
-                file_path = os.path.join("reels", file)
-                return send_file(file_path, as_attachment=True)
+        # Find the actual downloaded MP4 file
+        video_files = glob.glob(os.path.join(DOWNLOAD_FOLDER, f"{reel_shortcode}*.mp4"))
+        
+        if not video_files:
+            return jsonify({"error": "No video file found"}), 500
 
-        return jsonify({"error": "Download failed"}), 500
+        video_path = video_files[0]  # Get the first matching video file
+
+        # Send the file to the user
+        return send_file(video_path, as_attachment=True)
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
