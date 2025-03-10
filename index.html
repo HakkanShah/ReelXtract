@@ -27,18 +27,18 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error("Failed to download");
+                    throw new Error("Download failed");
                 }
                 return response.blob();
             })
             .then(blob => {
                 let link = document.createElement("a");
-                link.href = URL.createObjectURL(blob);
-                link.download = "reel.mp4";
+                link.href = window.URL.createObjectURL(blob);
+                link.download = "Instagram_Reel.mp4";
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-                document.getElementById("message").innerText = "Download started!";
+                document.getElementById("message").innerText = "Download successful!";
             })
             .catch(error => {
                 document.getElementById("message").innerText = "Error downloading reel";

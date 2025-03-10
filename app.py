@@ -1,13 +1,14 @@
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
-import yt_dlp
+import instaloader
 import os
 
 app = Flask(__name__)
 CORS(app)
 
-DOWNLOAD_FOLDER = "downloads"
-os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)  # Ensure the folder exists
+# Ensure "reels" directory exists
+if not os.path.exists("reels"):
+    os.makedirs("reels")
 
 @app.route('/download', methods=['POST'])
 def download_reel():
@@ -18,18 +19,23 @@ def download_reel():
         if not reel_url:
             return jsonify({"error": "No URL provided"}), 400
 
-        # Download Reel using yt_dlp
-        ydl_opts = {
-            'outtmpl': f'{DOWNLOAD_FOLDER}/%(title)s.%(ext)s',
-            'format': 'mp4/best',
-        }
+        # Extract short code from URL
+        reel_shortcode = reel_url.split("/")[-2]
 
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(reel_url, download=True)
-            video_filename = ydl.prepare_filename(info)
+        # Initialize Instaloader
+        loader = instaloader.Instaloader(dirname_pattern="reels")
 
-        # Send the file directly for user download
-        return send_file(video_filename, as_attachment=True)
+        # Download Reel
+        post = instaloader.Post.from_shortcode(loader.context, reel_shortcode)
+        loader.download_post(post, target="reels")
+
+        # Find the downloaded file
+        for file in os.listdir("reels"):
+            if file.startswith(reel_shortcode) and file.endswith(".mp4"):
+                file_path = os.path.join("reels", file)
+                return send_file(file_path, as_attachment=True)
+
+        return jsonify({"error": "Download failed"}), 500
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
