@@ -13,13 +13,13 @@
         <input type="text" id="url" placeholder="Enter Reel URL">
         <button onclick="downloadReel()">Download</button>
         <p id="message"></p>
-        <a id="downloadLink" style="display: none;" download>Click here to download</a>
     </div>
+
     <script>
         function downloadReel() {
             let url = document.getElementById("url").value;
             document.getElementById("message").innerText = "Processing...";
-    
+
             fetch("https://reelxtract.onrender.com/download", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -27,26 +27,25 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error("Network response was not OK");
+                    throw new Error("Failed to download");
                 }
-                return response.blob();  // Convert response to file blob
+                return response.blob();
             })
             .then(blob => {
-                let a = document.createElement("a");
-                a.href = URL.createObjectURL(blob);
-                a.download = "instagram_reel.mp4";  // ✅ Force file download
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
+                let link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.download = "reel.mp4";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
                 document.getElementById("message").innerText = "Download started!";
             })
             .catch(error => {
+                document.getElementById("message").innerText = "Error downloading reel";
                 console.error(error);
-                document.getElementById("message").innerText = "Error downloading the reel.";
             });
         }
     </script>
-    
 
 </body>
 </html>

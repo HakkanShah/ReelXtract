@@ -1,6 +1,5 @@
 flask
-instaloader
 gunicorn
 flask-cors
-pytube
+yt_dlp
 requests

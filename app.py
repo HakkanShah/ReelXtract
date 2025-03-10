@@ -1,10 +1,13 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
-import instaloader
-import traceback  # To capture errors
+import yt_dlp
+import os
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for frontend requests
+CORS(app)
+
+DOWNLOAD_FOLDER = "downloads"
+os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)  # Ensure the folder exists
 
 @app.route('/download', methods=['POST'])
 def download_reel():
@@ -15,25 +18,21 @@ def download_reel():
         if not reel_url:
             return jsonify({"error": "No URL provided"}), 400
 
-        # Debugging logs
-        print(f"Received URL: {reel_url}")
+        # Download Reel using yt_dlp
+        ydl_opts = {
+            'outtmpl': f'{DOWNLOAD_FOLDER}/%(title)s.%(ext)s',
+            'format': 'mp4/best',
+        }
 
-        # Extract shortcode from URL
-        loader = instaloader.Instaloader()
-        reel_shortcode = reel_url.split("/")[-2]
-        print(f"Extracted Shortcode: {reel_shortcode}")
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(reel_url, download=True)
+            video_filename = ydl.prepare_filename(info)
 
-        # Download the reel
-        post = instaloader.Post.from_shortcode(loader.context, reel_shortcode)
-        loader.download_post(post, target="reels")
-
-        return jsonify({"message": "Download successful!", "shortcode": reel_shortcode})
+        # Send the file directly for user download
+        return send_file(video_filename, as_attachment=True)
 
     except Exception as e:
-        error_message = f"Error: {str(e)}"
-        print("ERROR LOG:", error_message)
-        print(traceback.format_exc())  # Print full error traceback
-        return jsonify({"error": error_message}), 500
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
