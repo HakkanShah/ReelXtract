@@ -1,52 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Instagram Reels Downloader</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h2>Instagram Reels Downloader</h2>
+    </header>
 
     <div class="container">
-        <h1>ReelXtract</h1>
-        <input type="text" id="url" placeholder="Enter Reel URL">
-        <button onclick="downloadReel()">Download</button>
-        <p id="message"></p>
+      <h1>ReelXtract</h1>
+      <input type="text" id="url" placeholder="Enter Reel URL" />
+      <button id="download-btn">Download</button>
+      <p id="message"></p>
     </div>
+    <footer>
+      <p>
+        Made by
+        <a href="https://github.com/HakkanShah" target="_blank">
+          <img
+            src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg"
+            alt="GitHub Logo"
+            class="github-logo"
+          />
+          @HakkanShah
+        </a>
+      </p>
+    </footer>
 
-    <script>
-        function downloadReel() {
-            let url = document.getElementById("url").value;
-            document.getElementById("message").innerText = "Processing...";
-    
-            fetch("https://reelxtract.onrender.com/download", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ url: url })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Download failed");
-                }
-                return response.blob();
-            })
-            .then(blob => {
-                let link = document.createElement("a");
-                link.href = window.URL.createObjectURL(blob);
-                link.download = "Instagram_Reel.mp4";  // ✅ Ensures proper file download
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                document.getElementById("message").innerText = "Download started!";
-            })
-            .catch(error => {
-                document.getElementById("message").innerText = "Error downloading reel";
-                console.error(error);
-            });
-        }
-    </script>
-    
-
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>

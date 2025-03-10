@@ -1,128 +1,172 @@
-/* Import a modern, professional font */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+/* Import Instagram-style font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
 
-/* Reset and apply global styles */
+/* Reset default styles */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Poppins', sans-serif;
 }
 
-/* 🔥 Animated Gradient Background */
+/* Instagram Themed Background */
 body {
-    background: linear-gradient(135deg, #fffcfc, #1a1a1a, #252525);
-    background-size: 400% 400%;
-    animation: backgroundMove 3.5s infinite alternate ease-in-out;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-}
-
-/* 🌟 Smooth Gradient Animation */
-@keyframes backgroundMove {
-    0% { background-position: 0% 0%; }
-    100% { background-position: 100% 100%; }
-}
-
-/* 🎭 Glassmorphism Container with Floating Effect */
-.container {
-    background: rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(15px);
-    border-radius: 15px;
-    padding: 30px;
-    width: 400px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    text-align: center;
+    background: linear-gradient(135deg, #F58529, #DD2A7B, #8134AF, #515BD4);
     display: flex;
     flex-direction: column;
     align-items: center;
-    animation: floatUpDown 3.5s infinite ease-in-out;
+    min-height: 100vh;
+    width: 100%;
 }
 
-/* 🌊 Floating Animation */
-@keyframes floatUpDown {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+/* Fixed Header */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 0;
+    background: linear-gradient(90deg, #F58529, #DD2A7B, #e222df, #DD2A7B);
+    color: rgb(239, 245, 247);
+    text-shadow: 2px 2px 6px rgb(50, 24, 245);
+   
+    z-index: 1000;
 }
 
-/* Title Styling with Text Outline */
+/* Glassmorphism Container */
+.container {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    border-radius: 15px;
+    padding: 30px;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: fadeIn 0.8s ease-in-out;
+    margin-top: 165px; /* Ensures it stays below the fixed header */
+}
+
+/* Smooth Fade-in Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* Instagram Reels Inspired Title */
 h1 {
-    font-size: 24px;
-    color: #070707; /* Text fill color */
-    font-weight: bolder;
-    margin-bottom: 20px;
-    text-shadow: 
-        -1px -1px 0 #ffffff,  
-         1px -1px 0 #ffffff,  
-        -1px  1px 0 #ffffff,  
-         1px  1px 0 #ffffff; /* White outline */
+    font-size: 28px;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+    color: white;
+    text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.6);
 }
 
-/* 💠 Input Field with Smooth Effects */
+/* Input Field */
 input {
-    width: 90%;
+    width: 100%;
     padding: 12px;
-    background: rgb(255, 255, 255);
     border: none;
     border-radius: 8px;
     font-size: 16px;
-    outline: none;
     text-align: center;
-    transition: all 0.3s ease;
-    color: #000000;
-    box-shadow: inset 0 4px 6px rgb(253, 255, 255);
+    outline: none;
+    transition: 0.3s;
+    background: white;
+    color: black;
+    box-shadow: inset 0 4px 6px rgba(255, 31, 225, 0.4);
 }
 
-/* Input Focus Effect */
+input::placeholder {
+    color: rgb(165, 160, 160);
+}
+
+/* Focus Effect */
 input:focus {
-    background: rgb(255, 255, 255);
-    box-shadow: 0 0 10px rgb(71, 255, 252);
+    box-shadow: 0 0 10px rgba(255, 48, 108, 0.8);
 }
 
-/* ⚡ Button Design */
+/* Reel-Styled Button */
 button {
-    width: 90%;
-    padding: 12px;
-    background: linear-gradient(90deg, #007bff, #00d4ff);
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background: linear-gradient(90deg, #FF0066, #FF4D4D);
     color: white;
     border: none;
     border-radius: 8px;
     font-size: 18px;
     cursor: pointer;
-    transition: all 0.3s ease-in-out;
     font-weight: bold;
-    margin-top: 15px;
-    box-shadow: 0 4px 10px rgba(0, 122, 255, 0.3);
-    animation: pulseGlow 2s infinite ease-in-out;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 10px rgba(255, 0, 102, 0.3);
 }
 
-/* 🌟 Button Glow Effect */
-@keyframes pulseGlow {
-    0% { box-shadow: 0 0 10px rgba(0, 122, 255, 0.5); }
-    50% { box-shadow: 0 0 20px rgba(0, 122, 255, 1); }
-    100% { box-shadow: 0 0 10px rgba(0, 122, 255, 0.5); }
-}
-
-/* Button Hover */
+/* Button Hover & Click Effects */
 button:hover {
-    background: linear-gradient(90deg, #00d4ff, #007bff);
+    background: linear-gradient(90deg, #FF4D4D, #FF0066);
     transform: scale(1.05);
-    box-shadow: 0 6px 15px rgba(0, 122, 255, 0.5);
+    box-shadow: 0 6px 15px rgba(255, 0, 102, 0.5);
 }
 
-/* Button Click Effect */
 button:active {
     transform: scale(0.98);
 }
 
-/* 🎯 Success/Error Message */
+/* Loading Animation */
+#loading {
+    display: none;
+    margin-top: 15px;
+    color: white;
+    font-size: 16px;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/*  Success/Error Message */
 p {
     margin-top: 15px;
     font-size: 16px;
-    color: #1ee1ef;
+    color: #ffffff;
     opacity: 0.9;
+}
+
+/* Fixed Footer at Bottom */
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    text-align: center;
+    font-size: 14px;
+    color: white;
+    opacity: 0.9;
+}
+
+/* GitHub Link Styling */
+footer a {
+    color: #00fbff;
+    text-decoration: none;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+/*  GitHub Logo */
+.github-logo {
+    width: 16px;
+    height: 16px;
+    filter: invert(100%);
 }
