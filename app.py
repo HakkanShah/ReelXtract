@@ -3,7 +3,7 @@ from flask_cors import CORS
 import instaloader
 
 app = Flask(__name__)
-CORS(app)  # ✅ Enables CORS to allow frontend API requests
+CORS(app)  # ✅ Enables CORS for frontend requests
 
 @app.route('/download', methods=['POST'])  
 def download_reel():
@@ -18,10 +18,15 @@ def download_reel():
         loader = instaloader.Instaloader()
         reel_shortcode = reel_url.split("/")[-2]
 
-        # Download the reel
-        loader.download_post(instaloader.Post.from_shortcode(loader.context, reel_shortcode), target="reels")
+        # Get the Instagram Post object
+        post = instaloader.Post.from_shortcode(loader.context, reel_shortcode)
 
-        return jsonify({"message": "Download successful!", "shortcode": reel_shortcode})
+        # Extract the video URL
+        video_url = post.video_url
+        if not video_url:
+            return jsonify({"error": "No video found in this post."}), 404
+
+        return jsonify({"message": "Download ready!", "video_url": video_url})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500

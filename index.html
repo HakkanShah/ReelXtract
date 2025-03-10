@@ -11,8 +11,9 @@
     <div class="container">
         <h1>ReelXtract</h1>
         <input type="text" id="url" placeholder="Enter Reel URL">
-        <button onclick="downloadReel()">Download</button>
+        <button onclick="downloadReel()">Get Reel</button>
         <p id="message"></p>
+        <a id="downloadLink" href="#" style="display: none;" download>Download Reel</a>
     </div>
 
     <script>
@@ -20,16 +21,24 @@
             let url = document.getElementById("url").value;
             document.getElementById("message").innerText = "Processing...";
             
-            fetch("https://reelxtract.onrender.com", {
+            fetch("https://reelxtract.onrender.com/download", {  // ✅ Correct URL
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ url: url })
             })
             .then(response => response.json())
             .then(data => {
-                document.getElementById("message").innerText = data.message || data.error;
+                if (data.video_url) {
+                    document.getElementById("message").innerText = "Download Ready!";
+                    let downloadLink = document.getElementById("downloadLink");
+                    downloadLink.href = data.video_url;
+                    downloadLink.style.display = "block";
+                    downloadLink.innerText = "Click here to Download";
+                } else {
+                    document.getElementById("message").innerText = data.error || "Something went wrong!";
+                }
             })
-            .catch(error => console.error(error));
+            .catch(error => console.error("Fetch error:", error));
         }
     </script>
 
