@@ -29,11 +29,14 @@
             .then(response => response.json())
             .then(data => {
                 if (data.video_url) {
-                    document.getElementById("message").innerText = "Download Ready!";
-                    let downloadLink = document.getElementById("downloadLink");
+                    document.getElementById("message").innerText = "Downloading...";
+                    
+                    let downloadLink = document.createElement("a");
                     downloadLink.href = data.video_url;
-                    downloadLink.style.display = "block";
-                    downloadLink.innerText = "Click here to Download";
+                    downloadLink.download = "Instagram_Reel.mp4";  // ✅ Forces download
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
                 } else {
                     document.getElementById("message").innerText = data.error || "Something went wrong!";
                 }
