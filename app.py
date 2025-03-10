@@ -1,29 +1,26 @@
 from flask import Flask, request, jsonify
-import os
 import instaloader
 
 app = Flask(__name__)
 
-@app.route("/")
-def home():
-    return "Instagram Reels Downloader API is running!"
-
-@app.route("/download", methods=["POST"])
+@app.route('/download', methods=['POST'])  # ✅ Ensure POST method is allowed
 def download_reel():
     try:
         data = request.get_json()
         reel_url = data.get("url")
+
         if not reel_url:
-            return jsonify({"error": "URL is required"}), 400
-        
+            return jsonify({"error": "No URL provided"}), 400
+
+        # Extract short code
         loader = instaloader.Instaloader()
-        loader.download_post(instaloader.Post.from_shortcode(loader.context, reel_url.split("/")[-2]), target="downloads")
+        reel_shortcode = reel_url.split("/")[-2]
+        loader.download_post(instaloader.Post.from_shortcode(loader.context, reel_shortcode), target="reels")
 
         return jsonify({"message": "Download successful!"})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(debug=True, host="0.0.0.0", port=port)
+if __name__ == '__main__':
+    app.run(debug=True)
