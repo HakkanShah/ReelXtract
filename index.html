@@ -20,22 +20,20 @@
         function downloadReel() {
             let url = document.getElementById("url").value;
             document.getElementById("message").innerText = "Processing...";
-
+    
             fetch("https://reelxtract.onrender.com/download", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ url: url })
             })
-            .then(response => response.blob())  // Convert response to blob (file)
+            .then(response => response.blob())  // Convert response to file blob
             .then(blob => {
-                let downloadLink = document.getElementById("downloadLink");
-                let objectURL = URL.createObjectURL(blob);
-                
-                // ✅ Force download on click
-                downloadLink.href = objectURL;
-                downloadLink.style.display = "block";
-                downloadLink.click();  // ✅ Auto-clicks the download link
-                
+                let a = document.createElement("a");
+                a.href = URL.createObjectURL(blob);
+                a.download = "instagram_reel.mp4";  // ✅ Force file download
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
                 document.getElementById("message").innerText = "Download started!";
             })
             .catch(error => {
@@ -44,6 +42,7 @@
             });
         }
     </script>
+    
 
 </body>
 </html>
