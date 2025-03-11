@@ -5,12 +5,13 @@ from flask_limiter.util import get_remote_address
 import instaloader
 import os
 import glob
+import time
 
 app = Flask(__name__)
 CORS(app)
 
-# Configure rate limiter
-limiter = Limiter(app=app, key_func=get_remote_address, default_limits=["10 per minute"])
+# Configure rate limiter (to avoid Instagram bans)
+limiter = Limiter(app=app, key_func=get_remote_address, default_limits=["2 per minute"])
 
 DOWNLOAD_FOLDER = "reels"
 os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
@@ -20,7 +21,7 @@ def home():
     return jsonify({"message": "ReelXtract API is running!"})
 
 @app.route('/download', methods=['POST'])
-@limiter.limit("5 per minute")
+@limiter.limit("2 per minute")  # Reduced limit to prevent bans
 def download_reel():
     try:
         data = request.get_json()
@@ -28,42 +29,46 @@ def download_reel():
         if not reel_url:
             return jsonify({"error": "No URL provided"}), 400
 
-        # Extract shortcode from URL
-        print("Reel URL:", reel_url)
+        # Extract shortcode from the URL
+        print("Reel URL received:", reel_url)
         parts = reel_url.split("/")
         if len(parts) < 5:
             return jsonify({"error": "Invalid reel URL format"}), 400
         reel_shortcode = parts[-2]
         print("Extracted shortcode:", reel_shortcode)
 
-        # Initialize Instaloader with custom settings
+        # Initialize Instaloader and set session login
         loader = instaloader.Instaloader(dirname_pattern=DOWNLOAD_FOLDER, filename_pattern="{shortcode}")
-        
-        # Optionally log in if environment variables are set
-        username = os.getenv("IG_USERNAME")
-        password = os.getenv("IG_PASSWORD")
-        if username and password:
-            print("Attempting to log in with provided credentials")
-            loader.login(username, password)
-        
-        # Set custom User-Agent using _session attribute
+
+        # Load Instagram session (Fix for 401 Unauthorized errors)
+        session_file = "session-username"  # Replace 'username' with your Instagram username
+        if os.path.exists(session_file):
+            print("Loading Instagram session...")
+            loader.load_session_from_file("username", session_file)  # Replace 'username' with your actual IG username
+        else:
+            return jsonify({"error": "Instagram session file missing. Please log in using Instaloader first."}), 500
+
+        # Set custom User-Agent (fix for bot detection)
         if hasattr(loader.context, '_session'):
             loader.context._session.headers.update({
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36"
             })
-        
-        # Download the reel post
+
+        # Download the reel
         post = instaloader.Post.from_shortcode(loader.context, reel_shortcode)
-        print("Post fetched successfully")
+        print("Post fetched successfully. Downloading now...")
         loader.download_post(post, target=DOWNLOAD_FOLDER)
         
-        # Find the downloaded MP4 file using glob
+        # Wait for the file to be fully downloaded
+        time.sleep(2)
+
+        # Find the downloaded MP4 file
         video_files = glob.glob(os.path.join(DOWNLOAD_FOLDER, f"{reel_shortcode}*.mp4"))
         if not video_files:
             return jsonify({"error": "No video file found"}), 500
 
         video_path = video_files[0]
-        print("Video path:", video_path)
+        print("Video found:", video_path)
         return send_file(video_path, as_attachment=True)
 
     except Exception as e:
