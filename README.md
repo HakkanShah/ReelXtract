@@ -38,7 +38,7 @@ The frontend is deployed on GitHub Pages at: https://hakkanshah.github.io/ReelXt
 
 ### Render (Backend)
 The backend is deployed on Render using the start command:
-gunicorn app:app
+**gunicorn app:app**
 
 # Troubleshooting
  - **Rate Limiting:** The app limits requests to 5 per minute on the `/download` endpoint. Adjust limits if necessary.  
