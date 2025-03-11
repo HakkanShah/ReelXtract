@@ -11,7 +11,7 @@ CORS(app)
 
 # Configure rate limiter (optional, adjust as needed)
 limiter = Limiter(
-    app,
+    app=app,
     key_func=get_remote_address,
     default_limits=["10 per minute"]
 )
