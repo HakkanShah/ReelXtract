@@ -29,7 +29,6 @@ def download_reel():
             return jsonify({"error": "No URL provided"}), 400
 
         # Extract shortcode from URL
-        # Debug: print the incoming reel URL
         print("Reel URL:", reel_url)
         parts = reel_url.split("/")
         if len(parts) < 5:
@@ -39,24 +38,25 @@ def download_reel():
 
         # Initialize Instaloader with custom settings
         loader = instaloader.Instaloader(dirname_pattern=DOWNLOAD_FOLDER, filename_pattern="{shortcode}")
-
-        # Optional: Login if environment variables are set
+        
+        # Optionally log in if environment variables are set
         username = os.getenv("IG_USERNAME")
         password = os.getenv("IG_PASSWORD")
         if username and password:
             print("Attempting to log in with provided credentials")
             loader.login(username, password)
-
-        # Set custom User-Agent
-        loader.context.session.headers.update({
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36"
-        })
-
+        
+        # Set custom User-Agent using _session attribute
+        if hasattr(loader.context, '_session'):
+            loader.context._session.headers.update({
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36"
+            })
+        
         # Download the reel post
         post = instaloader.Post.from_shortcode(loader.context, reel_shortcode)
         print("Post fetched successfully")
         loader.download_post(post, target=DOWNLOAD_FOLDER)
-
+        
         # Find the downloaded MP4 file using glob
         video_files = glob.glob(os.path.join(DOWNLOAD_FOLDER, f"{reel_shortcode}*.mp4"))
         if not video_files:
