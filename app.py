@@ -18,6 +18,10 @@ limiter = Limiter(
 
 DOWNLOAD_FOLDER = "reels"
 os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
+@app.route('/')
+def home():
+    return jsonify({"message": "ReelXtract API is running!"})
+
 
 @app.route('/download', methods=['POST'])
 @limiter.limit("5 per minute")  # Specific limit for this endpoint
