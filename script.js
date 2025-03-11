@@ -4,10 +4,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const message = document.getElementById("message");
 
     function isValidInstagramURL(url) {
-        const regex = /^https:\/\/www\.instagram\.com\/reel\/[a-zA-Z0-9_-]+\/?$/;
-        return regex.test(url);
+        return url.includes("instagram.com/reel/") || url.includes("instagram.com/p/");
     }
-
+    
     downloadButton.addEventListener("click", async function () {
         let url = inputField.value.trim();
         if (!url || !isValidInstagramURL(url)) {
