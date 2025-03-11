@@ -3,9 +3,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const inputField = document.getElementById("url");
     const message = document.getElementById("message");
 
+    function isValidInstagramURL(url) {
+        const regex = /^https:\/\/www\.instagram\.com\/reel\/[a-zA-Z0-9_-]+\/?$/;
+        return regex.test(url);
+    }
+
     downloadButton.addEventListener("click", async function () {
         let url = inputField.value.trim();
-        if (!url) {
+        if (!url || !isValidInstagramURL(url)) {
             message.innerText = "⚠️ Please enter a valid Instagram Reel URL!";
             return;
         }
