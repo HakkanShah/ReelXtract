@@ -25,27 +25,31 @@ def download_reel():
     try:
         data = request.get_json()
         reel_url = data.get("url")
+
         if not reel_url:
             return jsonify({"error": "No URL provided"}), 400
 
-        # Get Instagram page content
+        # Set headers to mimic a real browser request
         headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36"
+            "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/537.36 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/537.36"
         }
         response = requests.get(reel_url, headers=headers)
+
         if response.status_code != 200:
             return jsonify({"error": "Failed to fetch Instagram page"}), 500
 
-        # Extract video URL using regex
+        # Extract video URL from the Instagram page source
         video_url_match = re.search(r'"video_url":"(https:\\/\\/[^"]+)"', response.text)
+
         if not video_url_match:
             return jsonify({"error": "Failed to extract video URL"}), 500
 
         video_url = video_url_match.group(1).replace("\\/", "/")  # Fix escaped slashes
 
-        # Download video file
+        # Download the video
         video_response = requests.get(video_url, stream=True)
         video_path = os.path.join(DOWNLOAD_FOLDER, "reel.mp4")
+
         with open(video_path, "wb") as file:
             for chunk in video_response.iter_content(chunk_size=1024):
                 file.write(chunk)
@@ -57,6 +61,5 @@ def download_reel():
 
 if __name__ == "__main__":
     import os
-    port = int(os.environ.get("PORT", 10000))  # Ensure it runs on Render's port
+    port = int(os.environ.get("PORT", 10000))  # Render assigns port dynamically
     app.run(host="0.0.0.0", port=port, debug=True)
-

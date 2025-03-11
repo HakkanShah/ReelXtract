@@ -4,18 +4,21 @@ document.addEventListener("DOMContentLoaded", function () {
     const message = document.getElementById("message");
 
     function isValidInstagramURL(url) {
-        return url.includes("instagram.com/reel/") || url.includes("instagram.com/p/");
+        const regex = /https?:\/\/(www\.)?instagram\.com\/(reel|p)\/[a-zA-Z0-9_-]+\/?/;
+        return regex.test(url);
     }
-    
+
     downloadButton.addEventListener("click", async function () {
         let url = inputField.value.trim();
+        console.log("Entered URL:", url);  // Debugging output
+
         if (!url || !isValidInstagramURL(url)) {
             message.innerText = "⚠️ Please enter a valid Instagram Reel URL!";
             return;
         }
 
         downloadButton.innerText = "Downloading...";
-        downloadButton.disabled = true; // Disable button during request
+        downloadButton.disabled = true;
         message.innerText = "";
 
         try {
@@ -26,18 +29,17 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             if (!response.ok) {
-                let errorText = await response.text();
-                throw new Error(errorText);
+                let errorText = await response.json();
+                throw new Error(errorText.error || "Unknown error");
             }
 
             let blob = await response.blob();
 
-            // Ensure we get an MP4 file
+            // Ensure it's an MP4 file
             if (blob.type !== "video/mp4") {
                 throw new Error("Invalid file type received.");
             }
 
-            // Create a download link
             let link = document.createElement("a");
             link.href = window.URL.createObjectURL(blob);
             link.download = "Instagram_Reel.mp4";
@@ -50,7 +52,6 @@ document.addEventListener("DOMContentLoaded", function () {
             message.innerText = `❌ Error: ${error.message}`;
             console.error("Download Error:", error);
         } finally {
-            // Restore button state
             downloadButton.innerText = "Download";
             downloadButton.disabled = false;
         }
