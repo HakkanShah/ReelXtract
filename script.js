@@ -21,14 +21,21 @@ document.addEventListener("DOMContentLoaded", function () {
                 body: JSON.stringify({ url: url })
             });
 
-            let data = await response.blob();
             if (!response.ok) {
-                throw new Error(await response.text());
+                let errorText = await response.text();
+                throw new Error(errorText);
+            }
+
+            let blob = await response.blob();
+
+            // Ensure we get an MP4 file
+            if (blob.type !== "video/mp4") {
+                throw new Error("Invalid file type received.");
             }
 
             // Create a download link
             let link = document.createElement("a");
-            link.href = window.URL.createObjectURL(data);
+            link.href = window.URL.createObjectURL(blob);
             link.download = "Instagram_Reel.mp4";
             document.body.appendChild(link);
             link.click();

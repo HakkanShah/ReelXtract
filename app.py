@@ -10,7 +10,7 @@ import time
 app = Flask(__name__)
 CORS(app)
 
-# Configure rate limiter (to avoid Instagram bans)
+# Configure rate limiter (prevents abuse & bans)
 limiter = Limiter(app=app, key_func=get_remote_address, default_limits=["2 per minute"])
 
 DOWNLOAD_FOLDER = "reels"
@@ -21,7 +21,7 @@ def home():
     return jsonify({"message": "ReelXtract API is running!"})
 
 @app.route('/download', methods=['POST'])
-@limiter.limit("2 per minute")  # Reduced limit to prevent bans
+@limiter.limit("2 per minute")  # Avoid bans by limiting downloads
 def download_reel():
     try:
         data = request.get_json()
@@ -40,15 +40,15 @@ def download_reel():
         # Initialize Instaloader and set session login
         loader = instaloader.Instaloader(dirname_pattern=DOWNLOAD_FOLDER, filename_pattern="{shortcode}")
 
-        # Load Instagram session (Fix for 401 Unauthorized errors)
-        session_file = "session-username"  # Replace 'username' with your Instagram username
+        # Load Instagram session
+        session_file = "session-username"  # Replace 'username' with your IG username
         if os.path.exists(session_file):
             print("Loading Instagram session...")
-            loader.load_session_from_file("username", session_file)  # Replace 'username' with your actual IG username
+            loader.load_session_from_file("username", session_file)  # Replace 'username' with your IG username
         else:
             return jsonify({"error": "Instagram session file missing. Please log in using Instaloader first."}), 500
 
-        # Set custom User-Agent (fix for bot detection)
+        # Set custom User-Agent
         if hasattr(loader.context, '_session'):
             loader.context._session.headers.update({
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36"
@@ -58,18 +58,19 @@ def download_reel():
         post = instaloader.Post.from_shortcode(loader.context, reel_shortcode)
         print("Post fetched successfully. Downloading now...")
         loader.download_post(post, target=DOWNLOAD_FOLDER)
-        
+
         # Wait for the file to be fully downloaded
         time.sleep(2)
 
         # Find the downloaded MP4 file
         video_files = glob.glob(os.path.join(DOWNLOAD_FOLDER, f"{reel_shortcode}*.mp4"))
         if not video_files:
-            return jsonify({"error": "No video file found"}), 500
+            return jsonify({"error": "No video file found. Instagram may have restricted access."}), 500
 
         video_path = video_files[0]
         print("Video found:", video_path)
-        return send_file(video_path, as_attachment=True)
+        
+        return send_file(video_path, as_attachment=True, mimetype="video/mp4")
 
     except Exception as e:
         error_message = f"Error occurred: {str(e)}"
