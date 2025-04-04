@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: reelxtract
+    env: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: DEBUG
+        value: false
+      - key: CHROME_HEADLESS
+        value: true
+      - key: CHROME_TIMEOUT
+        value: 30
+      - key: RATELIMIT_DEFAULT
+        value: 5/minute
+      - key: CACHE_TYPE
+        value: simple
+      - key: CACHE_DEFAULT_TIMEOUT
+        value: 300
+      - key: LOG_LEVEL
+        value: INFO
+    healthCheckPath: /
+    autoDeploy: true 
