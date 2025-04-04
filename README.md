@@ -37,7 +37,7 @@ ReelXtract is a simple and fast tool to download Instagram Reels instantly. Just
 The frontend is deployed on GitHub Pages at: https://hakkanshah.github.io/ReelXtract/
 
 ### Render (Backend)
-The backend is deployed on Render using the start command:
+The backend is deployed on Render using the start command: 
 **gunicorn app:app**
 
 # Troubleshooting
