@@ -46,5 +46,5 @@ The backend is deployed on Render using the start command:
 - **Logging:** Errors are logged to `error.log` for debugging purposes.  
 
 # Contributing
-Contributions, issues, and feature requests are welcome! Feel free to fork the repo and submit a pull request. Please see the issues page for more details.
+Contributions, issues, and feature requests are welcome! Feel free to fork the repo and submit a pull request. Please see the issues page for more detail.
    
