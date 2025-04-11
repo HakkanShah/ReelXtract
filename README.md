@@ -1,4 +1,4 @@
-# ReelXtract – Instagram Reel Downloader
+# ReelXtract – Instagram Reels Downloader
 
 ReelXtract is a simple and fast tool to download Instagram Reels instantly. Just paste the Reel URL, click download, and save the video with a sleek Instagram-themed UI.
 
