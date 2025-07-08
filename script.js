@@ -17,7 +17,6 @@ document.addEventListener("DOMContentLoaded", function () {
         message.innerText = text;
         message.style.color = isError ? "#ff4444" : "#00C851";
     }
-
     downloadButton.addEventListener("click", async function () {
         let url = inputField.value.trim();
         console.log("Entered URL:", url);
