@@ -112,7 +112,7 @@ button:active {
     transform: scale(0.98);
 }
 
-/* Loading Animation */
+
 #loading {
     display: none;
     margin-top: 15px;
