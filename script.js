@@ -17,6 +17,21 @@ document.addEventListener("DOMContentLoaded", function () {
         message.innerText = text;
         message.style.color = isError ? "#ff4444" : "#00C851";
     }
+
+    const downloadButtonSpan = downloadButton.querySelector("span");
+
+    function updateButtonState(isLoading) {
+        if (isLoading) {
+            if (downloadButtonSpan) downloadButtonSpan.innerText = "Downloading...";
+            downloadButton.disabled = true;
+            loadingIndicator.style.display = "block";
+        } else {
+            if (downloadButtonSpan) downloadButtonSpan.innerText = "Download Reel";
+            downloadButton.disabled = false;
+            loadingIndicator.style.display = "none";
+        }
+    }
+
     downloadButton.addEventListener("click", async function () {
         let url = inputField.value.trim();
         console.log("Entered URL:", url);
@@ -26,13 +41,11 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        downloadButton.innerText = "Downloading...";
-        downloadButton.disabled = true;
-        loadingIndicator.style.display = "block";
+        updateButtonState(true);
         message.innerText = "";
 
         try {
-            let response = await fetch("http://localhost:10000/https://reelxtract.onrender.com", {
+            let response = await fetch("https://reelxtract.onrender.com/download", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ url: url })
@@ -69,14 +82,14 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error("Download Error:", error);
             showMessage(`❌ Error: ${error.message}`, true);
         } finally {
-            downloadButton.innerText = "Download";
-            downloadButton.disabled = false;
-            loadingIndicator.style.display = "none";
+            updateButtonState(false);
         }
     });
 
     inputField.addEventListener("input", function () {
-        downloadButton.innerText = "Download";
+        if (!downloadButton.disabled) {
+            if (downloadButtonSpan) downloadButtonSpan.innerText = "Download Reel";
+        }
         message.innerText = "";
     });
 });
