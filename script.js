@@ -2,11 +2,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const downloadButton = document.getElementById("download-btn");
     const inputField = document.getElementById("url");
     const message = document.getElementById("message");
-    const loadingIndicator = document.createElement("div");
-    loadingIndicator.id = "loading";
-    loadingIndicator.style.display = "none";
-    loadingIndicator.innerHTML = "⏳ Processing...";
-    downloadButton.parentNode.insertBefore(loadingIndicator, downloadButton.nextSibling);
 
     function isValidInstagramURL(url) {
         const regex = /https?:\/\/(www\.)?instagram\.com\/(reel|p)\/[a-zA-Z0-9_-]+\/?/;
@@ -22,13 +17,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateButtonState(isLoading) {
         if (isLoading) {
-            if (downloadButtonSpan) downloadButtonSpan.innerText = "Downloading...";
+            if (downloadButtonSpan) downloadButtonSpan.innerHTML = '<div class="loader"></div> Downloading...';
             downloadButton.disabled = true;
-            loadingIndicator.style.display = "block";
         } else {
             if (downloadButtonSpan) downloadButtonSpan.innerText = "Download Reel";
             downloadButton.disabled = false;
-            loadingIndicator.style.display = "none";
         }
     }
 
