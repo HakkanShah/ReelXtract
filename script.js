@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
         message.innerText = "";
 
         try {
-            let response = await fetch("https://reelxtract.onrender.com/download", {
+            let response = await fetch("http://localhost:10000/https://reelxtract.onrender.com", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ url: url })

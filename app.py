@@ -3,12 +3,9 @@ from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_caching import Cache
-import undetected_chromedriver as uc
+import instaloader
 import requests
 import os
-import re
-import time
-import json
 import logging
 from logging.handlers import RotatingFileHandler
 from dotenv import load_dotenv
@@ -50,74 +47,31 @@ limiter = Limiter(
 DOWNLOAD_FOLDER = "reels"
 os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
 
-def get_chrome_options():
-    """Configure Chrome options based on environment variables"""
-    options = uc.ChromeOptions()
-    if os.getenv('CHROME_HEADLESS', 'True').lower() == 'true':
-        options.add_argument("--headless=new")
-    options.add_argument("--disable-gpu")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--log-level=3")
-    options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36")
-    return options
-
 @cache.memoize(timeout=300)
 def get_video_url(reel_url):
-    """ Extracts the video URL from Instagram using GraphQL API """
+    """ Extracts the video URL from Instagram using Instaloader """
     try:
         logger.info(f"Attempting to extract video URL from: {reel_url}")
-        options = get_chrome_options()
-        driver = uc.Chrome(options=options)
         
-        try:
-            driver.get(reel_url)
-            time.sleep(5)
-
-            # Get the shared data from the page
-            for script in driver.find_elements("tag name", "script"):
-                if script.get_attribute("type") == "application/ld+json":
-                    try:
-                        data = json.loads(script.get_attribute("innerHTML"))
-                        if "video" in data:
-                            video_url = data["video"]["contentUrl"]
-                            logger.info(f"Found video URL in JSON-LD: {video_url}")
-                            return video_url
-                    except json.JSONDecodeError:
-                        continue
-
-            # Try to find video element directly
-            video_elements = driver.find_elements("tag name", "video")
-            if video_elements:
-                video_url = video_elements[0].get_attribute("src")
-                if video_url:
-                    logger.info(f"Found video URL in video element: {video_url}")
-                    return video_url
-
-            # Try to find video URL in page source
-            page_source = driver.page_source
-            patterns = [
-                r'"video_url":"(https:\\/\\/[^"]+)"',
-                r'"video_versions":\[{"type":\d+,"url":"(https:\\/\\/[^"]+)"',
-                r'<video[^>]*src="([^"]+)"',
-                r'"playable_url":"(https:\\/\\/[^"]+)"',
-                r'"video_url_quality_hd":"(https:\\/\\/[^"]+)"',
-                r'"video_url_quality_sd":"(https:\\/\\/[^"]+)"'
-            ]
-
-            for pattern in patterns:
-                matches = re.findall(pattern, page_source)
-                for match in matches:
-                    url = match.replace("\\/", "/")
-                    if url.startswith("https://") and "video" in url.lower():
-                        logger.info(f"Found video URL in page source: {url}")
-                        return url
-
-            logger.warning("No video URL found in the page")
+        # Extract shortcode
+        if "/reel/" in reel_url:
+            shortcode = reel_url.split("/reel/")[1].split("/")[0]
+        elif "/p/" in reel_url:
+            shortcode = reel_url.split("/p/")[1].split("/")[0]
+        else:
+            logger.warning("Could not parse shortcode from URL")
             return None
 
-        finally:
-            driver.quit()
+        L = instaloader.Instaloader()
+        post = instaloader.Post.from_shortcode(L.context, shortcode)
+        
+        if post.is_video:
+            video_url = post.video_url
+            logger.info(f"Found video URL: {video_url}")
+            return video_url
+        else:
+            logger.warning("Post is not a video")
+            return None
 
     except Exception as e:
         logger.error(f"Error in get_video_url: {str(e)}", exc_info=True)
